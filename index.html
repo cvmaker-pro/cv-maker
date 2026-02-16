@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CV Maker Pro</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">CV</div>
+      <div class="brand-text">
+        <div class="title">CV Maker Pro</div>
+        <div class="subtitle">Modern + ATS templates • PDF export • Works offline</div>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <button id="btnReset" class="btn">Reset</button>
+      <button id="btnExport" class="btn">Export JSON</button>
+      <label class="btn file-btn">
+        Import JSON
+        <input id="importFile" type="file" accept=".json" />
+      </label>
+      <button id="btnDownload" class="btn primary">Download PDF</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- LEFT: Builder -->
+    <section class="panel builder">
+      <div class="panel-head">
+        <h2>Builder</h2>
+        <div class="muted small">Everything saves automatically.</div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <div class="control">
+          <label>Template</label>
+          <select id="templateSelect">
+            <optgroup label="Modern (Attractive)">
+              <option value="modern-1">Modern 1 (Sidebar)</option>
+              <option value="modern-2">Modern 2 (Bold Header)</option>
+              <option value="modern-3">Modern 3 (Clean Cards)</option>
+            </optgroup>
+            <optgroup label="ATS (Job-Friendly)">
+              <option value="ats-1">ATS 1 (Classic)</option>
+              <option value="ats-2">ATS 2 (Compact)</option>
+              <option value="ats-3">ATS 3 (Two Column)</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="control">
+          <label>Accent Color</label>
+          <input id="accentColor" type="color" value="#2563eb"/>
+        </div>
+
+        <div class="control">
+          <label>Font</label>
+          <select id="fontSelect">
+            <option value="inter">Inter (Modern)</option>
+            <option value="system">System (Fast)</option>
+            <option value="georgia">Georgia (Formal)</option>
+            <option value="mono">Mono (Tech)</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label>Show Photo</label>
+          <select id="photoToggle">
+            <option value="on">On</option>
+            <option value="off">Off</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Photo -->
+      <div class="block">
+        <div class="block-head">
+          <h3>Profile Photo</h3>
+          <div class="muted small">Optional (recommended for modern templates).</div>
+        </div>
+        <div class="photo-row">
+          <div class="photo-preview">
+            <img id="photoPreview" alt="Profile photo"/>
+            <div id="photoFallback" class="photo-fallback">No Photo</div>
+          </div>
+          <div class="photo-actions">
+            <label class="btn file-btn">
+              Upload Photo
+              <input id="photoInput" type="file" accept="image/*" />
+            </label>
+            <button id="btnRemovePhoto" class="btn danger">Remove</button>
+            <div class="muted small">
+              Tip: use a clear photo. No filters.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Personal Info -->
+      <div class="block">
+        <div class="block-head">
+          <h3>Personal Info</h3>
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label>Full Name</label>
+            <input id="fullName" type="text" placeholder="e.g. John Muthomi"/>
+          </div>
+          <div class="field">
+            <label>Job Title</label>
+            <input id="jobTitle" type="text" placeholder="e.g. Sales Representative"/>
+          </div>
+
+          <div class="field">
+            <label>Phone</label>
+            <input id="phone" type="text" placeholder="+254 7xx xxx xxx"/>
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input id="email" type="email" placeholder="john@gmail.com"/>
+          </div>
+
+          <div class="field">
+            <label>Location</label>
+            <input id="location" type="text" placeholder="Nairobi, Kenya"/>
+          </div>
+          <div class="field">
+            <label>Link (LinkedIn / Portfolio)</label>
+            <input id="link" type="text" placeholder="linkedin.com/in/yourname"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="block">
+        <div class="block-head">
+          <h3>Summary</h3>
+        </div>
+        <div class="field">
+          <textarea id="summary" rows="4" placeholder="Write 2–4 lines about yourself..."></textarea>
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="block">
+        <div class="block-head">
+          <h3>Skills</h3>
+          <div class="muted small">Type a skill and press Enter.</div>
+        </div>
+
+        <div class="skill-input-row">
+          <input id="skillInput" type="text" placeholder="e.g. Customer Service"/>
+          <button id="btnAddSkill" class="btn">Add</button>
+        </div>
+        <div id="skillsWrap" class="tag-wrap"></div>
+      </div>
+
+      <!-- Sections reorder -->
+      <div class="block">
+        <div class="block-head">
+          <h3>Section Order</h3>
+          <div class="muted small">Move sections up/down.</div>
+        </div>
+        <div id="sectionOrder" class="order-list"></div>
+      </div>
+
+      <!-- Experience -->
+      <div class="block">
+        <div class="block-head">
+          <h3>Work Experience</h3>
+          <button id="btnAddExp" class="btn small">+ Add Job</button>
+        </div>
+        <div id="expList" class="cards"></div>
+      </div>
+
+      <!-- Education -->
+      <div class="block">
+        <div class="block-head">
+          <h3>Education</h3>
+          <button id="btnAddEdu" class="btn small">+ Add School</button>
+        </div>
+        <div id="eduList" class="cards"></div>
+      </div>
+
+      <!-- Projects -->
+      <div class="block">
+        <div class="block-head">
+          <h3>Projects</h3>
+          <button id="btnAddProj" class="btn small">+ Add Project</button>
+        </div>
+        <div id="projList" class="cards"></div>
+      </div>
+
+      <!-- Certifications -->
+      <div class="block">
+        <div class="block-head">
+          <h3>Certifications</h3>
+          <button id="btnAddCert" class="btn small">+ Add</button>
+        </div>
+        <div id="certList" class="cards"></div>
+      </div>
+
+      <!-- Referees -->
+      <div class="block">
+        <div class="block-head">
+          <h3>Referees</h3>
+          <div class="muted small">Optional. Most jobs don’t require this.</div>
+        </div>
+        <textarea id="referees" rows="3" placeholder="Example:
+Jane Doe - Manager, ABC Shop - +254 7xx xxx xxx"></textarea>
+      </div>
+    </section>
+
+    <!-- RIGHT: Preview -->
+    <section class="panel preview">
+      <div class="panel-head">
+        <h2>Preview</h2>
+        <div class="muted small">This is exactly what downloads as PDF.</div>
+      </div>
+
+      <div class="paper-wrap">
+        <article id="cv" class="cv template-modern-1 font-inter">
+          <!-- Filled by JS -->
+        </article>
+      </div>
+
+      <div class="muted small footer-note">
+        Tip: For best results, keep CV 1 page. Use ATS templates for serious job applications.
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    CV Maker Pro • Built with HTML/CSS/JS • 
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
